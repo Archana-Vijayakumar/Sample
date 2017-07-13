@@ -3,7 +3,7 @@ import java.util.List;
 /**
  * Created by DELL on 7/13/2017.
  */
-public class AttributesModel {
+class AttributesModel {
   private String name;
   private ItemModel items;
 
@@ -21,5 +21,10 @@ public class AttributesModel {
 
   public void setItems(ItemModel items) {
     this.items = items;
+  }
+
+  @Override
+  public String toString() {
+    return "[name=" + name + ", items=" + items + "]";
   }
 }

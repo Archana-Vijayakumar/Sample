@@ -22,4 +22,10 @@ public class ContactAddressModel {
   public void setAttributes(List<AttributesModel> attributes) {
     this.attributes = attributes;
   }
+
+  @Override
+  public String toString() {
+    return "ContactAddressModel [contactKey=" + contactKey + ", attributes=" + attributes + "]";
+  }
+
 }

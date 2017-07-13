@@ -1,7 +1,7 @@
 /**
  * Created by DELL on 7/13/2017.
  */
-public class ValueModel {
+ class ValueModel {
   private String name;
   private String value;
 
@@ -25,5 +25,10 @@ public class ValueModel {
 
   public void setValue(String value) {
     this.value = value;
+  }
+
+  @Override
+  public String toString() {
+    return "[name=" + name + ", value=" + value + "]";
   }
 }

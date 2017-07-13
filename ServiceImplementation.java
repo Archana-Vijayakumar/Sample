@@ -2,7 +2,11 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 import static spark.Spark.put;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.google.gson.Gson;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,15 +62,24 @@ public class ServiceImplementation {
 
     public static void main(String[] args){
       ServiceImplementation serviceImplementation = new ServiceImplementation();
-      System.out.println(new Gson().toJson(serviceImplementation.setValues()));
+
       get("/getDetails",(request, response) ->
       {
         return new Gson().toJson(serviceImplementation.setValues());
       });
 
       post("/createDetail", (request, response) -> {
-        ContactAddressModel newModel = new Gson().fromJson(request.body(), ContactAddressModel.class);
-        return new Gson().toJson(serviceImplementation.createValue(newModel));
+
+        ObjectMapper mapper = new ObjectMapper();
+        ContactAddressModel contactAddressModel = null;
+        try {
+          contactAddressModel = mapper.readValue(request.body(), ContactAddressModel.class);
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+        return serviceImplementation.createValue(contactAddressModel);
+        /*ContactAddressModel newModel = new Gson().fromJson(request.body(), ContactAddressModel.class);
+        return new Gson().toJson(serviceImplementation.createValue(newModel));*/
       });
 
       put("/updateDetail", (request, response) ->{
@@ -75,14 +88,25 @@ public class ServiceImplementation {
       });
     }
 
-    public ContactAddressModel createValue(ContactAddressModel newModel){
-      ContactAddressModel createdModel = new ContactAddressModel();
+    public String createValue(ContactAddressModel newModel){
+
+      try {
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        return ow.writeValueAsString(newModel);
+      } catch (JsonProcessingException e) {
+        e.printStackTrace();
+      }
+      return null;
+     /* ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+      String json = ow.writeValueAsString(object);*/
+      /*ContactAddressModel createdModel = new ContactAddressModel();
       createdModel.setContactKey(newModel.getContactKey());
 
       List<AttributesModel> attributesModelList = new ArrayList<>();
-      List<ValueModel> valueModelList = new ArrayList<>();
+
 
       for(int i = 0; i < newModel.getAttributes().size(); i++){
+        List<ValueModel> valueModelList = new ArrayList<>();
         AttributesModel attributesModel = newModel.getAttributes().get(i);
         ItemModel itemModel = attributesModel.getItems();
         for(int j=0; j < itemModel.getValues().size(); j++){
@@ -97,7 +121,8 @@ public class ServiceImplementation {
       createdModel.setAttributes(attributesModelList);
       System.out.print(new Gson().toJson(createdModel));
       contactAddressModelList.add(createdModel);
-      return createdModel;
+      return createdModel;*/
+
     }
 
     public ContactAddressModel updateDetail(ContactAddressModel model){
