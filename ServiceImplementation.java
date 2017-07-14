@@ -2,13 +2,21 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 import static spark.Spark.put;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
 import com.google.gson.Gson;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  * Created by DELL on 7/13/2017.
@@ -63,10 +71,10 @@ public class ServiceImplementation {
     public static void main(String[] args){
       ServiceImplementation serviceImplementation = new ServiceImplementation();
 
-      get("/getDetails",(request, response) ->
-      {
-        return new Gson().toJson(serviceImplementation.setValues());
-      });
+      get("/getDetails",(request, response) ->{
+        return serviceImplementation.newValue();
+          }
+      );
 
       post("/createDetail", (request, response) -> {
 
@@ -90,12 +98,16 @@ public class ServiceImplementation {
 
     public String createValue(ContactAddressModel newModel){
 
-      try {
+      /*try {*/
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+      try {
         return ow.writeValueAsString(newModel);
       } catch (JsonProcessingException e) {
         e.printStackTrace();
       }
+     /* } catch (JsonProcessingException e) {
+        e.printStackTrace();
+      }*/
       return null;
      /* ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
       String json = ow.writeValueAsString(object);*/
@@ -127,5 +139,19 @@ public class ServiceImplementation {
 
     public ContactAddressModel updateDetail(ContactAddressModel model){
         return model;
+    }
+
+    public ContactAddressModel newValue(){
+      ObjectMapper mapper = new ObjectMapper();
+      mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+      /*mapper.setVisibilityChecker(VisibilityChecker.Std.defaultInstance().withFieldVisibility(
+          JsonAutoDetect.Visibility.ANY))*/;
+      ContactAddressModel contactAddressModel = null;
+      try {
+        contactAddressModel = mapper.readValue(new File("src/main/java/Content.json"),ContactAddressModel.class);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      return contactAddressModel;
     }
 }

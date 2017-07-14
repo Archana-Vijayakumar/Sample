@@ -1,12 +1,14 @@
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 
 /**
  * Created by DELL on 7/13/2017.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ContactAddressModel {
   private String contactKey;
   private List<AttributesModel> attributes;
-
+  public ContactAddressModel(){}
   public String getContactKey() {
     return contactKey;
   }

@@ -1,6 +1,9 @@
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Created by DELL on 7/13/2017.
  */
+//@JsonIgnoreProperties(ignoreUnknown = true)
  class ValueModel {
   private String name;
   private String value;

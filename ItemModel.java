@@ -1,11 +1,13 @@
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 
 /**
  * Created by DELL on 7/13/2017.
  */
+//@JsonIgnoreProperties(ignoreUnknown = true)
 class ItemModel {
   private List<ValueModel> values;
-
+  public ItemModel(){}
   public List<ValueModel> getValues() {
     return values;
   }
