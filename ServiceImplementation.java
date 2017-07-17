@@ -1,31 +1,22 @@
 import static spark.Spark.get;
 import static spark.Spark.post;
 import static spark.Spark.put;
-
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
 import com.google.gson.Gson;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.apache.log4j.Logger;
+
 
 /**
  * Created by DELL on 7/13/2017.
  */
 public class ServiceImplementation {
 
+    Logger logger = Logger.getLogger(ServiceImplementation.class);
       public static void main(String[] args){
       ServiceImplementation serviceImplementation = new ServiceImplementation();
 
@@ -72,6 +63,7 @@ public class ServiceImplementation {
     }
 
     public ContactAddressModel newValue() throws JsonFileNotFoundException{
+      logger.info("Inside the Method used to create the new value");
       ObjectMapper mapper = new ObjectMapper();
       mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
       ContactAddressModel contactAddressModel = null;
