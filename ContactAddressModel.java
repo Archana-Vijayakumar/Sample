@@ -5,11 +5,11 @@ import java.util.List;
 /**
  * Created by DELL on 7/13/2017.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class ContactAddressModel {
 
   private String contactKey;
-  private List<AttributesModel> attributes;
+  private List<AttributesModel> attributeSet;
   public ContactAddressModel(){}
   public String getContactKey() {
     return contactKey;
@@ -20,16 +20,16 @@ public class ContactAddressModel {
   }
 
   public List<AttributesModel> getAttributes() {
-    return attributes;
+    return attributeSet;
   }
 
   public void setAttributes(List<AttributesModel> attributes) {
-    this.attributes = attributes;
+    this.attributeSet = attributes;
   }
 
   @Override
   public String toString() {
-    return "ContactAddressModel [contactKey=" + contactKey + ", attributes=" + attributes + "]";
+    return "ContactAddressModel [contactKey=" + contactKey + ", attributes=" + attributeSet + "]";
   }
 
 }

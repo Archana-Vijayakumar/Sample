@@ -5,10 +5,10 @@ import java.util.List;
 /**
  * Created by DELL on 7/13/2017.
  */
-//@JsonIgnoreProperties(ignoreUnknown = true)
+
 class AttributesModel {
   private String name;
-  private ItemModel items;
+  private List<ItemModel> items;
   public AttributesModel(){}
   public String getName() {
     return name;
@@ -18,11 +18,11 @@ class AttributesModel {
     this.name = name;
   }
 
-  public ItemModel getItems() {
+  public List<ItemModel> getItems() {
     return items;
   }
 
-  public void setItems(ItemModel items) {
+  public void setItems(List<ItemModel> items) {
     this.items = items;
   }
 

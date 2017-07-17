@@ -3,8 +3,10 @@ import static spark.Spark.post;
 import static spark.Spark.put;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
@@ -14,6 +16,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -23,56 +26,16 @@ import org.json.simple.parser.ParseException;
  */
 public class ServiceImplementation {
 
-    List<ContactAddressModel> contactAddressModelList = new ArrayList<>();
-    public ValueModel setValueModel(String s1,String s2) {
-
-      ValueModel valueModel = new ValueModel();
-      valueModel.setName(s1);
-      valueModel.setValue(s2);
-      return valueModel;
-    }
-
-    public AttributesModel setAttributeModel(String s, ItemModel itemModels){
-      AttributesModel attributesModel = new AttributesModel();
-      attributesModel.setName(s);
-      attributesModel.setItems(itemModels);
-      return attributesModel;
-    }
-
-    public ContactAddressModel setContactAddressModel(String s, List<AttributesModel> attributesModels){
-      ContactAddressModel contactAddressModel = new ContactAddressModel();
-      contactAddressModel.setContactKey(s);
-      contactAddressModel.setAttributes(attributesModels);
-
-      contactAddressModelList.add(contactAddressModel);
-
-      return contactAddressModel;
-    }
-    public ContactAddressModel setValues(){
-
-      ItemModel itemModel2 = new ItemModel();
-      List<ValueModel> valueModelList2 = new ArrayList<>();
-      valueModelList2.add(setValueModel("Email Address", "preethi@usermind.com"));
-      valueModelList2.add(setValueModel("HTML Enabled", "true"));
-      itemModel2.setValues(valueModelList2);
-      List<AttributesModel> attributesModelList = new ArrayList<>();
-      attributesModelList.add(setAttributeModel("test data1",itemModel2));
-
-      ItemModel itemModel1 = new ItemModel();
-      List<ValueModel> valueModelList1 = new ArrayList<>();
-      valueModelList1.add(setValueModel("Email Address", "preethi@usermind.com"));
-      valueModelList1.add(setValueModel("First Name", "Preethi"));
-      itemModel1.setValues(valueModelList1);
-      attributesModelList.add(setAttributeModel("test data2",itemModel1));
-
-      return setContactAddressModel("6dcb271e-06db-4100-bebb-b145469cd4d1",attributesModelList);
-    }
-
-    public static void main(String[] args){
+      public static void main(String[] args){
       ServiceImplementation serviceImplementation = new ServiceImplementation();
 
       get("/getDetails",(request, response) ->{
-        return serviceImplementation.newValue();
+            try {
+              return serviceImplementation.newValue();
+            } catch (JsonFileNotFoundException e) {
+              e.printStackTrace();
+            }
+            return null;
           }
       );
 
@@ -86,8 +49,6 @@ public class ServiceImplementation {
           e.printStackTrace();
         }
         return serviceImplementation.createValue(contactAddressModel);
-        /*ContactAddressModel newModel = new Gson().fromJson(request.body(), ContactAddressModel.class);
-        return new Gson().toJson(serviceImplementation.createValue(newModel));*/
       });
 
       put("/updateDetail", (request, response) ->{
@@ -97,60 +58,27 @@ public class ServiceImplementation {
     }
 
     public String createValue(ContactAddressModel newModel){
-
-      /*try {*/
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-      try {
-        return ow.writeValueAsString(newModel);
-      } catch (JsonProcessingException e) {
-        e.printStackTrace();
-      }
-     /* } catch (JsonProcessingException e) {
-        e.printStackTrace();
-      }*/
-      return null;
-     /* ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-      String json = ow.writeValueAsString(object);*/
-      /*ContactAddressModel createdModel = new ContactAddressModel();
-      createdModel.setContactKey(newModel.getContactKey());
-
-      List<AttributesModel> attributesModelList = new ArrayList<>();
-
-
-      for(int i = 0; i < newModel.getAttributes().size(); i++){
-        List<ValueModel> valueModelList = new ArrayList<>();
-        AttributesModel attributesModel = newModel.getAttributes().get(i);
-        ItemModel itemModel = attributesModel.getItems();
-        for(int j=0; j < itemModel.getValues().size(); j++){
-          ValueModel valueModel = new ValueModel();
-          valueModel.setName(itemModel.getValues().get(j).getName());
-          valueModel.setValue(itemModel.getValues().get(j).getValue());
-          valueModelList.add(valueModel);
+        try {
+          return ow.writeValueAsString(newModel);
+        } catch (JsonProcessingException e) {
+          e.printStackTrace();
         }
-        itemModel.setValues(valueModelList);
-        attributesModelList.add(attributesModel);
-      }
-      createdModel.setAttributes(attributesModelList);
-      System.out.print(new Gson().toJson(createdModel));
-      contactAddressModelList.add(createdModel);
-      return createdModel;*/
-
-    }
+      return null;
+     }
 
     public ContactAddressModel updateDetail(ContactAddressModel model){
         return model;
     }
 
-    public ContactAddressModel newValue(){
+    public ContactAddressModel newValue() throws JsonFileNotFoundException{
       ObjectMapper mapper = new ObjectMapper();
       mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-      /*mapper.setVisibilityChecker(VisibilityChecker.Std.defaultInstance().withFieldVisibility(
-          JsonAutoDetect.Visibility.ANY))*/;
       ContactAddressModel contactAddressModel = null;
       try {
-        contactAddressModel = mapper.readValue(new File("src/main/java/Content.json"),ContactAddressModel.class);
+        contactAddressModel = mapper.readValue(new File("src/main/resources/Content1.json"),ContactAddressModel.class);
       } catch (IOException e) {
-        e.printStackTrace();
+          throw new JsonFileNotFoundException("File is Not Accessible");
       }
       return contactAddressModel;
     }
